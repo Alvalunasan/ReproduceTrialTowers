@@ -8,7 +8,7 @@ function blockTable = getBlocksSession(~,subj, date, session_num)
     query = fq_subj & fq_date & fq_sess;
     query = query.query_string;
     
-    columns = {'task', 'level', 'set_id', 'easy_block'};
+    columns = {'task', 'level', 'set_id', 'easy_block', 'n_trials', 'first_trial'};
     blockStruct = fetch(behavior.TowersBlock & query, columns{:});
     blockTable = struct2table(blockStruct);
 

@@ -1,4 +1,4 @@
-function [err,vradd] = virmenEngineStartup(exper)
+function [err,vr,vradd] = virmenEngineStartup(exper)
 
 vradd = struct;
 % Clean up in case of an incorrect exit (e.g. user terminated Virmen by stopping debug mode)
@@ -50,12 +50,12 @@ vr.sensorData = [];
 
 % Configurations that depend on user functions
 if exist(func2str(vr.exper.transformationFunction),'file') == 3   % MEX programs don't report nargin
-  vradd.numTransformInputs = 1;
+  numTransformInputs = 1;
 else
-  vradd.numTransformInputs = nargin(vr.exper.transformationFunction);
+  numTransformInputs = nargin(vr.exper.transformationFunction);
 end
-vradd.numMovementOutputs = nargout(vr.exper.movementFunction);
-if vradd.numMovementOutputs == 3
+numMovementOutputs = nargout(vr.exper.movementFunction);
+if numMovementOutputs == 3
   vr.movementExtras = [];
 end
 
@@ -63,7 +63,6 @@ end
 drawnow;
 virmenOpenGLRoutines(0,windows,ismac);
 
-% Run initialization code
 try
     vr = vr.code.initialization(vr); %#ok<*NASGU>
 catch ME
@@ -86,7 +85,14 @@ firstTic = tic;
 vr.dt = 0; % Don't move on the first time step
 
 
-vradd = save_vradd_fonts(vradd, letterGrid, letterFont, letterAspectRatio);
-vradd = save_vradd_windows(vradd, windows, transformations);
-vradd = save_vradd_old(oldWorld, oldBackgroundColor, oldColorSize);
+vradd.letterGrid = letterGrid;
+vradd.letterFont = letterFont;
+vradd.letterAspectRatio = letterAspectRatio;
+vradd.windows = windows;
+vradd.transformations = transformations;
+vradd.oldWorld = oldWorld;
+vradd.oldBackgroundColor = oldBackgroundColor;
+vradd.oldColorSize = oldColorSize;
+vradd.numTransformInputs = numTransformInputs;
+
 

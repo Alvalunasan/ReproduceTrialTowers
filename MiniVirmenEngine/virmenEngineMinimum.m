@@ -1,4 +1,4 @@
-function [err, vradd] = virmenEngineMinimum(vr, vradd)
+function [err, vr, vradd] = virmenEngineMinimum(vr, vradd)
 % Virmen engine
 
 % *************************************************************************
@@ -36,11 +36,20 @@ function [err, vradd] = virmenEngineMinimum(vr, vradd)
 % possibility of those damages.
 % *************************************************************************
 
+% No error by default
+err = -1;
 
-[letterGrid, letterFont, letterAspectRatio] = load_vradd_fonts(vradd);
-[windows, transformations] = load_vradd_windows(vradd);
-[oldWorld, oldBackgroundColor, oldColorSize] = load_vradd_old(vradd);
+letterGrid = vradd.letterGrid;
+letterFont = vradd.letterFont;
+letterAspectRatio = vradd.letterAspectRatio;
+windows = vradd.windows;
+transformations = vradd.transformations;
+oldWorld = vradd.oldWorld;
+oldBackgroundColor = vradd.oldBackgroundColor;
+oldColorSize = vradd.oldColorSize;
+numTransformInputs = vradd.numTransformInputs;
 
+firstTic = tic;
 
 % Run engine
 % Update the number of iterations
@@ -303,7 +312,9 @@ if vr.keyPressed == 256 % Escape key
 end
 
 
-vradd = save_vradd_old(oldWorld, oldBackgroundColor, oldColorSize);
+vradd.oldWorld = oldWorld;
+vradd.oldBackgroundColor = oldBackgroundColor;
+vradd.oldColorSize = oldColorSize;
 
 end
 

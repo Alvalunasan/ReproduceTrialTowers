@@ -5,8 +5,8 @@ classdef ReproduceTrialTowers
     properties (Constant)
         DataBasePrefix             = 'u19_'
         DataBaseHost               = 'datajoint00.pni.princeton.edu'
-        virmenPath                 = 'C:\Users\BrainCogs_Projects\tankmousevr\'
-        videoPath                 =  'C:\Users\BrainCogs_Projects\ReproduceTrialTowersData\Videos';
+        virmenPath                 = 'C:\Users\tankadmin\Documents\MATLAB\AlvaroLuna\tankmousevr'
+        videoPath                 =  'C:\Users\tankadmin\Documents\MATLAB\AlvaroLuna\ReproduceTrialTowersData\Videos';
         experPath                  = fullfile(ReproduceTrialTowers.virmenPath, 'experiments');
         protocolPath               = fullfile(ReproduceTrialTowers.experPath, 'protocols');
         classPath                  = fileparts(mfilename('fullpath'));

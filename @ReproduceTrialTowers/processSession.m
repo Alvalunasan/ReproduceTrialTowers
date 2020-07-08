@@ -32,6 +32,10 @@ for j=1:numBlocks
     [mazes, criteria, globalSettings, vr] = obj.protocolFun(vr);
     [err, vr, vradd] = virmenEngineStartup(exper);
     
+    if isstruct(err)   
+        error(err)
+    end
+    
     vr.forcedTypes = Choice.all;
     vr.position = zeros(1,4);
     vr.velocity = zeros(1,4);
@@ -48,22 +52,30 @@ for j=1:numBlocks
     vr.updateReward = 0;
     
     trialTable = obj.getTrialsBlock(blockKey);
+    trialKey = blockKey;
     
     numTrials = size(trialTable,1);
     
     %for k=1:numTrials
     for k=3:3
-        
+                
         vr.state =  BehavioralState.SetupTrial;
         ac_trial = trialTable(k,:);
+        trialKey.trial_idx = ac_trial.trial_idx;
         
         num_frames = size(ac_trial{1,'position'}{:},1);
-        stimuli = obj.getStimuli(ac_trial);
+        stimuli = obj.getStimuli(ac_trial, vr.poissonStimuli.panSession(vr.mazeID,1));
         
         vr.forcedIndex = Choice.(ac_trial{1,'trial_type'}{:});
-        vr.poissonStimuli.panSession(vr.mazeID,1) = stimuli;
-        vr.poissonStimuli.panSession(vr.mazeID,2) = stimuli;
-        vr.poissonStimuli.panSession(vr.mazeID,3) = stimuli;
+        
+        %Bug in Matlab 2015 to pass entire struct
+        %fields = fieldnames(stimuli);
+        %for idxfield = 1:length(fields)
+        %    acfield = fields(idxfield);
+            vr.poissonStimuli.panSession(vr.mazeID,1) = stimuli;
+            vr.poissonStimuli.panSession(vr.mazeID,2) = stimuli;
+            vr.poissonStimuli.panSession(vr.mazeID,3) = stimuli;
+        %end
                 
         videoname = [blockKey.subject_fullname '-' blockKey.session_date '-B' ...
             num2str(blockKey.block) '-T' num2str(k) '.mp4'];
@@ -79,12 +91,22 @@ for j=1:numBlocks
             
             [err, vr, vradd] = virmenEngineMinimum(vr, vradd);
             
+            if isstruct(err)  
+                error(err)
+            end
+            
             fr = virmenGetFrame(1);
+            if size(fr,1) > 1088
+                fr = fr(1:1088,:,:);
+            end
             [j numBlocks k numTrials s num_frames]
             writeVideo(video,fr);
             
         end
         close(video);
+        trialKey.video = video;
+        make(behavior.TowersBlockTrialVideo, trialKey);
+        
     end
     
 end

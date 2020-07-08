@@ -1,5 +1,6 @@
-function stimuli = getStimuli(obj, ac_trial)
+function stimuli = getStimuli(obj, ac_trial, orig_stimuli)
 
+stimuli = orig_stimuli;
 
 left_pos = ac_trial{1,'cue_pos_left'}{:};
 right_pos = ac_trial{1,'cue_pos_right'}{:};

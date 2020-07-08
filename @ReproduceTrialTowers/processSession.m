@@ -45,6 +45,7 @@ for j=1:numBlocks
     %Each time a block is changed, compute new world...
     %computeWorld(vr)
     
+    session_number = blockTable{j, 'session_number'};
     blockKey.block = blockTable{j, 'block'};
     
     vr.mainMazeID = blockTable{j, 'level'};
@@ -53,6 +54,7 @@ for j=1:numBlocks
     
     trialTable = obj.getTrialsBlock(blockKey);
     trialKey = blockKey;
+    trialKey.session_number = session_number;
     
     numTrials = size(trialTable,1);
     
@@ -77,10 +79,11 @@ for j=1:numBlocks
             vr.poissonStimuli.panSession(vr.mazeID,3) = stimuli;
         %end
                 
-        videoname = [blockKey.subject_fullname '-' blockKey.session_date '-B' ...
-            num2str(blockKey.block) '-T' num2str(k) '.mp4'];
-        video = VideoWriter(fullfile(ReproduceTrialTowers.videoPath, videoname), 'MPEG-4');
-        open(video);
+        %videoname = [blockKey.subject_fullname '-' blockKey.session_date '-B' ...
+        %    num2str(blockKey.block) '-T' num2str(k) '.mp4'];
+        %video = VideoWriter(fullfile(ReproduceTrialTowers.videoPath, videoname), 'MPEG-4');
+        %open(video);
+        %videof = uint8(1088, 1792, 3, num_frames);
         for s=1:num_frames
             %for l=1:10
             
@@ -99,13 +102,21 @@ for j=1:numBlocks
             if size(fr,1) > 1088
                 fr = fr(1:1088,:,:);
             end
+            
+            if s == 1
+                videof = uint8(fr(:,:,3)*255);
+            else
+                videof(:,:,end+1) = uint8(fr(:,:,3)*255);
+            end
+            
             [j numBlocks k numTrials s num_frames]
-            writeVideo(video,fr);
+            %writeVideo(video,fr);
             
         end
-        close(video);
-        trialKey.video = video;
-        make(behavior.TowersBlockTrialVideo, trialKey);
+        %close(video);
+        trialKey.video = videof;
+        trialKey
+        insert(behavior.TowersBlockTrialVideo, trialKey);
         
     end
     

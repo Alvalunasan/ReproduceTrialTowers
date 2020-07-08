@@ -1,15 +1,8 @@
-function blockTable = getBlocksSession(~,subj, date, session_num)
+function blockTable = getBlocksSession(~,sessionkey)
 
-    %Correct info for querying in table
-    fq_subj = FormatQuery('subject_fullname', 'CHAR', subj);
-    fq_date = FormatQuery('session_date', 'DATE', date);
-    fq_sess = FormatQuery('session_number', 'INT', session_num);
-
-    query = fq_subj & fq_date & fq_sess;
-    query = query.query_string;
-    
+    %Correct info for querying in table    
     columns = {'task', 'level', 'set_id', 'easy_block', 'n_trials', 'first_trial'};
-    blockStruct = fetch(behavior.TowersBlock & query, columns{:});
+    blockStruct = fetch(behavior.TowersBlock & sessionkey, columns{:});
     blockTable = struct2table(blockStruct);
 
 end

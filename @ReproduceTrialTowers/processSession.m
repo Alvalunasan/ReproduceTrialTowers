@@ -15,8 +15,20 @@ obj.trainee = obj.getTrainee(obj.experFile, obj.stimulusBank, obj.protocolFun);
 obj.exper = obj.getExper(obj.experFile, obj.experCode);
 
 
+sessionname = [sessionKey.subject_fullname '-' sessionKey.session_date '-S' ...
+         num2str(sessionKey.session_number)];
+
+lPath = fullfile(ReproduceTrialTowers.videoPath, sessionname)
+rPath = [obj.bucketPath  '/' sessionname]
+
+if ~exist(lPath, 'dir')
+    mkdir(lPath);
+end
+mkdir_ssh(rPath);
+
 numBlocks = size(blockTable,1);
 blockKey = sessionKey;
+
 
 for j=1:numBlocks
     close all force
@@ -58,8 +70,8 @@ for j=1:numBlocks
     
     numTrials = size(trialTable,1);
     
-    %for k=1:numTrials
-    for k=3:3
+    for k=1:numTrials
+    %for k=3:3
                 
         vr.state =  BehavioralState.SetupTrial;
         ac_trial = trialTable(k,:);
@@ -79,10 +91,9 @@ for j=1:numBlocks
             vr.poissonStimuli.panSession(vr.mazeID,3) = stimuli;
         %end
                 
-        %videoname = [blockKey.subject_fullname '-' blockKey.session_date '-B' ...
-        %    num2str(blockKey.block) '-T' num2str(k) '.mp4'];
-        %video = VideoWriter(fullfile(ReproduceTrialTowers.videoPath, videoname), 'MPEG-4');
-        %open(video);
+        videoname = [sessionname '-B' num2str(blockKey.block) '-T' num2str(k) '.mp4'];
+        video = VideoWriter(fullfile(lPath, videoname), 'MPEG-4');
+        open(video);
         %videof = uint8(1088, 1792, 3, num_frames);
         for s=1:num_frames
             %for l=1:10
@@ -103,19 +114,26 @@ for j=1:numBlocks
                 fr = fr(1:1088,:,:);
             end
             
-            if s == 1
-                videof = uint8(fr(:,:,3)*255);
-            else
-                videof(:,:,end+1) = uint8(fr(:,:,3)*255);
-            end
+            fr(:,:,1) = fr(:,:,2);
+            fr = rgb2gray(fr);
+            fr = flip(fr ,1); 
+            
+%             if s == 1
+%                 videof = uint8(fr(:,:,3)*255);
+%             else
+%                 videof(:,:,end+1) = uint8(fr(:,:,3)*255);
+%             end
             
             [j numBlocks k numTrials s num_frames]
-            %writeVideo(video,fr);
+            writeVideo(video,fr);
             
         end
-        %close(video);
-        trialKey.video = videof;
-        trialKey
+        remotefilepath = [rPath '/' videoname];
+        close(video);
+        sftp_video(lPath,videoname,rPath);
+        
+        trialKey.filepath = remotefilepath;
+        
         insert(behavior.TowersBlockTrialVideo, trialKey);
         
     end

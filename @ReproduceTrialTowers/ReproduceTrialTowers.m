@@ -6,7 +6,8 @@ classdef ReproduceTrialTowers
         DataBasePrefix             = 'u19_'
         DataBaseHost               = 'datajoint00.pni.princeton.edu'
         virmenPath                 = 'C:\Users\tankadmin\Documents\MATLAB\AlvaroLuna\tankmousevr'
-        videoPath                 =  'C:\Users\tankadmin\Documents\MATLAB\AlvaroLuna\ReproduceTrialTowersData\Videos';
+        videoPath                  = 'C:\Users\tankadmin\Documents\MATLAB\AlvaroLuna\ReproduceTrialTowersData\Videos';
+        bucketPath                 = '/jukebox/brody/schottdorf/E65_tt_videos';
         experPath                  = fullfile(ReproduceTrialTowers.virmenPath, 'experiments');
         protocolPath               = fullfile(ReproduceTrialTowers.experPath, 'protocols');
         classPath                  = fileparts(mfilename('fullpath'));
@@ -49,8 +50,7 @@ classdef ReproduceTrialTowers
             
             obj.DJConnection = getdjconnection(obj.DataBasePrefix, obj.DataBaseHost);
             obj.checkKey(key)
-            obj.checkUniqueSession(key);
-            obj.sessionKey = key;
+            obj.sessionKey = obj.checkUniqueSession(key);
             obj.processSession(obj.sessionKey);
             disp('jajaja');
             

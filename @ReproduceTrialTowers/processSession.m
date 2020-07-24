@@ -16,15 +16,19 @@ obj.exper = obj.getExper(obj.experFile, obj.experCode);
 
 
 sessionname = [sessionKey.subject_fullname '-' sessionKey.session_date '-S' ...
-         num2str(sessionKey.session_number)];
+    num2str(sessionKey.session_number)];
 
-lPath = fullfile(ReproduceTrialTowers.videoPath, sessionname)
-rPath = [obj.bucketPath  '/' sessionname]
+lPath = fullfile(ReproduceTrialTowers.videoPath, sessionname);
+rPathWin = fullfile(obj.bucketPathWin,sessionname);
+rPathLin = [obj.bucketPathLin  '/' sessionname];
 
 if ~exist(lPath, 'dir')
     mkdir(lPath);
 end
-mkdir_ssh(rPath);
+% if ~exist(rPathWin, 'dir')
+%     mkdir(rPathWin);
+% end
+%mkdir_ssh(rPath);
 
 numBlocks = size(blockTable,1);
 blockKey = sessionKey;
@@ -44,7 +48,7 @@ for j=1:numBlocks
     [mazes, criteria, globalSettings, vr] = obj.protocolFun(vr);
     [err, vr, vradd] = virmenEngineStartup(exper);
     
-    if isstruct(err)   
+    if isstruct(err)
         error(err)
     end
     
@@ -71,71 +75,76 @@ for j=1:numBlocks
     numTrials = size(trialTable,1);
     
     for k=1:numTrials
-    %for k=3:3
-                
-        vr.state =  BehavioralState.SetupTrial;
+        %for k=3:3
+        
         ac_trial = trialTable(k,:);
         trialKey.trial_idx = ac_trial.trial_idx;
         
-        num_frames = size(ac_trial{1,'position'}{:},1);
-        stimuli = obj.getStimuli(ac_trial, vr.poissonStimuli.panSession(vr.mazeID,1));
         
-        vr.forcedIndex = Choice.(ac_trial{1,'trial_type'}{:});
+        ex_key = obj.ex_vkeys(obj.ex_vkeys.session_number == trialKey.session_number & ...
+            obj.ex_vkeys.block          == trialKey.block          & ...
+            obj.ex_vkeys.trial_idx      == trialKey.trial_idx, 'trial_idx');
         
-        %Bug in Matlab 2015 to pass entire struct
-        %fields = fieldnames(stimuli);
-        %for idxfield = 1:length(fields)
-        %    acfield = fields(idxfield);
+        if isempty(ex_key)
+            
+            vr.state =  BehavioralState.SetupTrial;
+            
+            
+            num_frames = size(ac_trial{1,'position'}{:},1);
+            stimuli = obj.getStimuli(ac_trial, vr.poissonStimuli.panSession(vr.mazeID,1));
+            
+            vr.forcedIndex = Choice.(ac_trial{1,'trial_type'}{:});
+            
+            %Bug in Matlab 2015 to pass entire struct
+            %fields = fieldnames(stimuli);
+            %for idxfield = 1:length(fields)
+            %    acfield = fields(idxfield);
             vr.poissonStimuli.panSession(vr.mazeID,1) = stimuli;
             vr.poissonStimuli.panSession(vr.mazeID,2) = stimuli;
             vr.poissonStimuli.panSession(vr.mazeID,3) = stimuli;
-        %end
+            %end
+            
+            videoname = [sessionname '-B' num2str(blockKey.block) '-T' num2str(k) '.mp4'];
+            video = VideoWriter(fullfile(lPath, videoname), 'MPEG-4');
+            open(video);
+            %videof = uint8(1088, 1792, 3, num_frames);
+            %for s=1:num_frames
+            for s=1:num_frames
                 
-        videoname = [sessionname '-B' num2str(blockKey.block) '-T' num2str(k) '.mp4'];
-        video = VideoWriter(fullfile(lPath, videoname), 'MPEG-4');
-        open(video);
-        %videof = uint8(1088, 1792, 3, num_frames);
-        for s=1:num_frames
-            %for l=1:10
-            
-            vr.position(ExperimentLog.SPATIAL_COORDS) = ac_trial{1,'position'}{:}(s,:);
-            vr.collision = ac_trial{1,'collision'}{:}(s);
-            vr.velocity(ExperimentLog.SPATIAL_COORDS) = ac_trial{1,'velocity'}{:}(s,:);
-            vr.sensorData(ExperimentLog.SENSOR_COORDS) = ac_trial{1,'sensor_dots'}{:}(s,:);
-            
-            [err, vr, vradd] = virmenEngineMinimum(vr, vradd);
-            
-            if isstruct(err)  
-                error(err)
+                vr.position(ExperimentLog.SPATIAL_COORDS) = ac_trial{1,'position'}{:}(s,:);
+                vr.collision = ac_trial{1,'collision'}{:}(s);
+                vr.velocity(ExperimentLog.SPATIAL_COORDS) = ac_trial{1,'velocity'}{:}(s,:);
+                vr.sensorData(ExperimentLog.SENSOR_COORDS) = ac_trial{1,'sensor_dots'}{:}(s,:);
+                
+                [err, vr, vradd] = virmenEngineMinimum(vr, vradd);
+                
+                if isstruct(err)
+                    error(err)
+                end
+                
+                fr = virmenGetFrame(1);
+                if size(fr,1) > 1088
+                    fr = fr(1:1088,:,:);
+                end
+                
+                fr(:,:,1) = fr(:,:,2);
+                fr = rgb2gray(fr);
+                fr = flip(fr ,1);
+                
+                [j numBlocks k numTrials s num_frames]
+                writeVideo(video,fr);
+                
             end
+            remotefilepath = [rPathLin '/' videoname];
+            close(video);
+            %sftp_video(lPath,videoname,rPath);
             
-            fr = virmenGetFrame(1);
-            if size(fr,1) > 1088
-                fr = fr(1:1088,:,:);
-            end
+            trialKey.video_path = remotefilepath;
+            trialKey.video_file = videof;
             
-            fr(:,:,1) = fr(:,:,2);
-            fr = rgb2gray(fr);
-            fr = flip(fr ,1); 
-            
-%             if s == 1
-%                 videof = uint8(fr(:,:,3)*255);
-%             else
-%                 videof(:,:,end+1) = uint8(fr(:,:,3)*255);
-%             end
-            
-            [j numBlocks k numTrials s num_frames]
-            writeVideo(video,fr);
+            %insert(behavior.TowersBlockTrialVideo2, trialKey);
             
         end
-        remotefilepath = [rPath '/' videoname];
-        close(video);
-        sftp_video(lPath,videoname,rPath);
-        
-        trialKey.filepath = remotefilepath;
-        
-        insert(behavior.TowersBlockTrialVideo, trialKey);
-        
     end
     
 end

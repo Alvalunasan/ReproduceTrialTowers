@@ -1,4 +1,4 @@
-function checkKey(obj, key)
+function checkfieldsKey(obj, key)
 
 for i=1:length(ReproduceTrialTowers.minKeyFields)
     ackey = ReproduceTrialTowers.minKeyFields{i};

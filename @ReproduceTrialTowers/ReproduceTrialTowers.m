@@ -3,11 +3,13 @@ classdef ReproduceTrialTowers
     %   Detailed explanation goes here
     
     properties (Constant)
-        DataBasePrefix             = 'u19_'
-        DataBaseHost               = 'datajoint00.pni.princeton.edu'
-        virmenPath                 = 'C:\Users\tankadmin\Documents\MATLAB\AlvaroLuna\tankmousevr'
-        videoPath                  = 'C:\Users\tankadmin\Documents\MATLAB\AlvaroLuna\ReproduceTrialTowersData\Videos';
-        bucketPath                 = '/jukebox/brody/schottdorf/E65_tt_videos';
+        dataBasePrefix             = 'u19_'
+        dataBaseHost               = 'datajoint00.pni.princeton.edu'
+        projectPath                = fileparts(fileparts(mfilename('fullpath')))
+        virmenPath                 = fullfile(ReproduceTrialTowers.projectPath, 'tankmousevr');
+        videoPath                  = fullfile(ReproduceTrialTowers.projectPath, 'ReproduceTrialTowersData', 'Videos');
+        bucketPathWin              = 'Z:\TowersTaskPlayBackVideos';
+        bucketPathLin              = '/mnt/bucket/braininit/TowersTaskPlayBackVideos';
         experPath                  = fullfile(ReproduceTrialTowers.virmenPath, 'experiments');
         protocolPath               = fullfile(ReproduceTrialTowers.experPath, 'protocols');
         classPath                  = fileparts(mfilename('fullpath'));
@@ -22,8 +24,9 @@ classdef ReproduceTrialTowers
     end
     
     properties
-        DJConnection
+        djConnection
         sessionKey
+        user_id
         
         vr
         exper
@@ -34,6 +37,7 @@ classdef ReproduceTrialTowers
         trainee
         regiment
         stimulusBank
+        ex_vkeys
     end
     
     methods
@@ -48,12 +52,20 @@ classdef ReproduceTrialTowers
                'ReproduceTrialTowers(key)']); 
             end
             
-            obj.DJConnection = getdjconnection(obj.DataBasePrefix, obj.DataBaseHost);
-            obj.checkKey(key)
-            obj.sessionKey = obj.checkUniqueSession(key);
-            obj.processSession(obj.sessionKey);
-            disp('jajaja');
             
+            obj.djConnection = getdjconnection(obj.dataBasePrefix, obj.dataBaseHost);
+                        
+            obj.checkfieldsKey(key)
+            obj.sessionKey = obj.checkUniqueSession(key);
+            obj.user_id = obj.get_userid(key);
+            [status, obj.ex_vkeys] = obj.check_already_run(key);
+            if status
+                
+                git_u = GitUpdateProject(obj.virmenPath, key.session_date);
+                git_u.cherrypick_commit(obj.virmenPath);
+                obj.processSession(obj.sessionKey);
+                disp('jajaja');
+            end
             
         end
         

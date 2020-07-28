@@ -1,7 +1,7 @@
-function [status, existing_videokeys] = check_already_run(obj, key)
+function [status, existing_videokeys] = checkAlreadyRun(obj, key)
 
 status = true;
-existing_videokeys = fetch(behavior.TowersBlockTrialVideo2 & key);
+existing_videokeys = fetch(behavior.TowersBlockTrialVideo & key);
 existing_trialkeys = fetch(behavior.TowersBlockTrial & key);
 
 all_run = length(existing_videokeys) == length(existing_trialkeys);
@@ -10,7 +10,7 @@ partial_run = ~isempty(existing_videokeys) && ~all_run;
 if (all_run)
     s = input('This session has already been processed into videos. Overwrite ? (y/n) ', 's');
     if s == 'y' || s=='Y'
-        del(behavior.TowersBlockTrialVideo2 & key);
+        del(behavior.TowersBlockTrialVideo & key);
         status = true;
     elseif s == 'n' || s=='N'
         status = false;
@@ -26,7 +26,7 @@ if (partial_run)
               'Overwrite session (o)' newline ...
               'Nothing           (n) '], 's');
     if s == 'o' || s=='O'
-        del(behavior.TowersBlockTrialVideo2 & key);
+        del(behavior.TowersBlockTrialVideo & key);
         status = true;
     elseif s == 'c' || s=='C'
         status = true;
@@ -37,7 +37,7 @@ if (partial_run)
     end
 end
 
-existing_videokeys = fetch(behavior.TowersBlockTrialVideo2 & key);
+existing_videokeys = fetch(behavior.TowersBlockTrialVideo & key);
 if ~isempty(existing_videokeys)
     existing_videokeys = struct2table(existing_videokeys, 'AsArray', true);
 else

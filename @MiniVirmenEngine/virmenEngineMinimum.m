@@ -1,4 +1,4 @@
-function [err, vr, vradd] = virmenEngineMinimum(vr, vradd)
+function [err, vr, vradd] = virmenEngineMinimum(obj, vr, vradd)
 % Virmen engine
 
 % *************************************************************************

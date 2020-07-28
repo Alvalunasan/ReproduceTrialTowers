@@ -4,7 +4,6 @@ classdef GitUpdateProject
     
     properties (Constant)
     
-        veto_dirs           =  {'.git'}
         cherry_picks        = {'1df1e3004dc19ba6366a6487f103a71f1b619b1e'}
         project_url         = 'https://bitbucket.org/sakoay/tankmousevr.git'
     end
@@ -23,10 +22,15 @@ classdef GitUpdateProject
             obj.project_path = project_path;
             obj.commit_date = commit_date;
             
+            obj.remove_project_path(obj.project_path);
+                        
             obj.get_last_version_project(obj.parent_path, obj.project_path, obj.project_url);
             
             commit_id = obj.get_commit_version(project_path, commit_date);
             obj.update_project_commit(project_path, commit_id);
+            
+            addpath(genpath(obj.project_path));
+            rmpath(fullfile(obj.project_path, '.git'));
             
         end
         

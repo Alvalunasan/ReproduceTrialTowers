@@ -1,4 +1,4 @@
-function [err,vr,vradd] = virmenEngineStartup(exper)
+function [err,vr,vradd] = virmenEngineStartup(obj, exper)
 
 vradd = struct;
 % Clean up in case of an incorrect exit (e.g. user terminated Virmen by stopping debug mode)

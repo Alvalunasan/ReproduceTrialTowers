@@ -1,9 +1,9 @@
 function trainee = getTrainee(obj, experFile, stimulusBank, protocolFun)
 
-load(ReproduceTrialTowers.exampleTraineeFile);
+load(obj.exampleTraineeFile);
 
 if ~exist('trainee', 'var')
-    error([ReproduceTrialTowers.exampleTraineeFile ' does not contain a trainee file']);
+    error([ob.exampleTraineeFile ' does not contain a trainee file']);
 end
 
 trainee.protocol = protocolFun;

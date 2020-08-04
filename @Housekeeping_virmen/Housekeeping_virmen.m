@@ -29,7 +29,7 @@ classdef Housekeeping_virmen
             obj.rigparamfile_virmen        = fullfile(obj.virmenPath, obj.rig_param_pathfile);
             obj.binarysearchfile           = fullfile(obj.virmenPath, obj.binary_search_path);
                 
-            obj.this_mex_ext               = get_mex_ext();
+            obj.this_mex_ext               = rtt_utils.get_mex_ext();
             
             obj.copy_rigparameter(obj.rigparamfile, obj.rigparamfile_virmen);
             obj.installGitHooks(obj.virmenPath);

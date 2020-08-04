@@ -10,9 +10,9 @@ classdef ReproduceTrialTowers
         projectPath                = fileparts(ReproduceTrialTowers.classPath);
         virmenPath                 = fullfile(ReproduceTrialTowers.projectPath, 'tankmousevr');
         
-        %localVideoPath             = fullfile(ReproduceTrialTowers.projectPath, 'ReproduceTrialTowersData', 'Videos');
-        bucketSave                = '/braininit';
-        bucketDirectoryName      = 'TowersTaskPlayBackVideos';
+        bucketMainPath             = 'mnt/bucket/u19_dj/';
+        bucketSecPath              = 'external_files/u19_behavior/TowersBlockTrialVideo';
+        bucketPath                 = [ReproduceTrialTowers.bucketMainPath ReproduceTrialTowers.bucketSecPath];
         
         minKeyFields               = {'subject_fullname', 'session_date'};
     end
@@ -23,7 +23,7 @@ classdef ReproduceTrialTowers
         ex_vkeys
         
         bucketVideoPath
-        videoPath
+        localVideoPath
         videoPrefix
         
     end
@@ -33,6 +33,8 @@ classdef ReproduceTrialTowers
 
             setenv('DB_PREFIX', 'u19_')
             dj.conn(obj.dataBaseHost)
+            
+            
 
         end
         

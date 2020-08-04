@@ -1,4 +1,4 @@
-function userid = getUserId(~, key)
+function userid = getUserIdFromSubject(key)
 
     userid = fetch1(subject.Subject & key, 'user_id');
      

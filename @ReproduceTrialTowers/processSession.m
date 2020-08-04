@@ -28,6 +28,17 @@ for j=1:numBlocks
     trialKey = blockKey;
     trialKey.session_number = session_number;
     
+    localVideoPathblock = fullfile(obj.localVideoPath, ['B' num2str(blockKey.block)]);
+    bucketVideoPathblock = fullfile(obj.bucketVideoPath, ['B' num2str(blockKey.block)]);
+    
+    if ispc
+        bucketVideoPathblock = strrep(bucketVideoPathblock,'\','/');
+    end
+    
+    if ~exist(localVideoPathblock, 'dir')
+        mkdir(localVideoPathblock)
+    end
+    
     numTrials = size(trialTable,1);
     for k=1:numTrials
         %for k=3:3
@@ -48,10 +59,15 @@ for j=1:numBlocks
             vr.poissonStimuli.panSession(vr.mazeID,1:3) = repmat(stimuli,1,3);
             
             videoName = [obj.videoPrefix '-B' num2str(blockKey.block) '-T' num2str(k) '.mp4'];
-            videoNameFull = fullfile(obj.videoPath, videoName);
-            trialKey.video_path = videoNameFull;
+            localVideoNameFull = fullfile(localVideoPathblock, videoName);
+            bucketVideoNameFull = fullfile(bucketVideoPathblock, videoName);
+            if ispc
+                bucketVideoNameFull = strrep(bucketVideoNameFull,'\','/');
+            end
             
-            video = VideoWriter(videoNameFull, 'MPEG-4');
+            trialKey.video_path = bucketVideoNameFull;
+            
+            video = VideoWriter(localVideoNameFull, 'MPEG-4');
             open(video);
             num_frames = size(ac_trial{1,'position'}{:},1);
             for s=1:num_frames

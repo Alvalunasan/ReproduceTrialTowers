@@ -1,6 +1,6 @@
 function [experCode, experFile, protocolTitle, protocolFun, stimulus_file] =  getExperimentInfo(obj, acqTable)
 
-session_protocol = splitChar(' ', acqTable{1,'session_protocol'}{:});    
+session_protocol = rtt_utils.splitChar(' ', acqTable{1,'session_protocol'}{:});    
 experCode = session_protocol{1};
 experCode = str2func(strrep(experCode,'.m',''));
 experFile = session_protocol{2};

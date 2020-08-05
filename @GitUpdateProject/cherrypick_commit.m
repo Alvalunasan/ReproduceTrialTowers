@@ -3,6 +3,10 @@ function cherrypick_commit(obj, project_path)
 
 cd(project_path)
 status = 0;
+
+%git_command = ['git cherry-pick ' obj.cherry_picks{1} '^..' obj.cherry_picks{end}];
+%status = system(git_command);
+
 for i=1:length(obj.cherry_picks)
     
     if status == 0

@@ -1,14 +1,14 @@
 function [status, existing_videokeys] = checkAlreadyRun(obj, key)
 
 status = true;
-existing_videokeys = fetch(behavior.TowersBlockTrialVideo & key);
-existing_trialkeys = fetch(behavior.TowersBlockTrial & key);
+video_table = obj.getTrialVideoTable(key);
+trials_table = obj.getTrialsBlock(key, false);
 
-all_run = length(existing_videokeys) == length(existing_trialkeys);
-partial_run = ~isempty(existing_videokeys) && ~all_run;
+all_run = size(video_table,1) == size(trials_table,1);
+partial_run = ~isempty(video_table) && ~all_run;
 
 if (all_run)
-    s = input('This session has already been processed into videos. Overwrite ? (y/n) ', 's');
+    s = input('This selection has already been processed into videos. Overwrite ? (y/n) ', 's');
     if s == 'y' || s=='Y'
         del(behavior.TowersBlockTrialVideo & key);
         status = true;
@@ -20,8 +20,17 @@ if (all_run)
 end
 
 if (partial_run)
-    s = input(['There are missing trials to process.' newline ...
-              'What do you want to do?' newline ... 
+    
+    video_info_table = obj.getInfoBlockTrials(video_table);
+    trials_info_table =  obj.getInfoBlockTrials(trials_table);
+    
+    disp('There are missing trials to process.')
+    disp('Next trials are already processed for selected session')
+    disp(video_info_table{:,'info'})
+    disp('Next trials conform the entire selection')
+    disp(trials_info_table{:,'info'})
+    
+    s = input(['What do you want to do?' newline ... 
               'Complete process  (c)' newline ...
               'Overwrite session (o)' newline ...
               'Nothing           (n) '], 's');

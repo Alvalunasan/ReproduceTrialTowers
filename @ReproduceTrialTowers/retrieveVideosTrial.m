@@ -12,7 +12,7 @@ if nargin < 1
 end
 
 obj.checkfieldsKey(key)
-sesskey = obj.checkUniqueSession(key);
+[~, sesskey] = obj.checkUniqueSession(key);
 triaVideoTable = obj.getTrialVideoTable(key);
 
 if size(triaVideoTable,1) == 1

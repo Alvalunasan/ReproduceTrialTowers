@@ -86,7 +86,12 @@ for j=1:numBlocks
                 fr = virmenGetFrame(1);
                 fr = obj.processFrame(fr);
                 
-                disp([j numBlocks k numTrials s num_frames])
+                if mod(s,20) == 0
+                    disp(videoName)
+                    disp(['blocks: ' num2str(j) '/' num2str(numBlocks)])
+                    disp(['trials: ' num2str(k) '/' num2str(numTrials)])
+                    disp(['frames: ' num2str(s) '/' num2str(num_frames) newline])
+                end
                 writeVideo(video,fr);
                 
             end

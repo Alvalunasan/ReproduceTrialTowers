@@ -1,4 +1,4 @@
-function key = checkUniqueSession(~, key)
+function newkey = checkUniqueSession(~, key)
 
     if ~isfield(key,'session_number')
         key.session_number = 0;
@@ -10,6 +10,10 @@ function key = checkUniqueSession(~, key)
     elseif length(sessionStruct) > 1
         error('More than one session found with key, (maybe session_number missing)');
     end
+    
+    newkey.subject_fullname = key.subject_fullname;
+    newkey.session_date     = key.session_date;
+    newkey.session_number   = key.session_number;
      
 end
 

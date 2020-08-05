@@ -6,13 +6,13 @@ if nargin < 1
         'key.subject_fullname = ''hnieh_E65'''  newline ...
         'key.session_date     = ''2018-02-02''' newline ...
         'key.block            =           1'    newline ...
-        'key.trial            =           5'    newline ...
+        'key.trial_idx        =           5'    newline ...
         'rtt = ReproduceTrialTowers()'          newline ...
         'rtt.retrieveVideosTrial(key)']);
 end
 
 obj.checkfieldsKey(key)
-obj.checkUniqueSession(key);
+sesskey = obj.checkUniqueSession(key);
 triaVideoTable = obj.getTrialVideoTable(key);
 
 if size(triaVideoTable,1) == 1
@@ -23,12 +23,21 @@ if size(triaVideoTable,1) == 1
     
     
 elseif size(triaVideoTable,1) > 1
+    key
+    warning('Multiple trials for key found in database')
+    [session_label, info_table] = obj.getInfoBlockTrials(triaVideoTable);
+    obj.displayInfoTrial(session_label, info_table, false)
     
-    obj.getInfoBlockTrials(triaVideoTable)
-    
-    error('Many trials in this key')
 else
-    error('Key for trial video not found in database')
+    key
+    warning('Key for trial video not found in database')
+    SessionVideoTable = obj.getTrialVideoTable(sesskey);
+    [session_label, info_table] = obj.getInfoBlockTrials(SessionVideoTable);
+    obj.displayInfoTrial(session_label, info_table, true)
+    
+
+    
+    
 end
 
 

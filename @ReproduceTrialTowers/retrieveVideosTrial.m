@@ -25,14 +25,14 @@ if size(triaVideoTable,1) == 1
 elseif size(triaVideoTable,1) > 1
     key
     warning('Multiple trials for key found in database')
-    [session_label, info_table] = obj.getInfoBlockTrials(triaVideoTable);
+    [info_table, session_label] = obj.getInfoBlockTrials(triaVideoTable);
     obj.displayInfoTrial(session_label, info_table, false)
     
 else
     key
     warning('Key for trial video not found in database')
     SessionVideoTable = obj.getTrialVideoTable(sesskey);
-    [session_label, info_table] = obj.getInfoBlockTrials(SessionVideoTable);
+    [info_table, session_label] = obj.getInfoBlockTrials(SessionVideoTable);
     obj.displayInfoTrial(session_label, info_table, true)
     
 

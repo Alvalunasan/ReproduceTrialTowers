@@ -5,7 +5,8 @@ classdef GitUpdateProject
     properties (Constant)
     
         cherry_picks        = {'1df1e3004dc19ba6366a6487f103a71f1b619b1e', ...
-                               '0d6ce8ab3d0de85e5e36ee43cdedcd260b9933e5'}
+                               '0d6ce8ab3d0de85e5e36ee43cdedcd260b9933e5', ...
+                               '8727db0e68ef330aee89f6c24e3daabd91e2c9ed'}
         %cherry_picks        = {'844589f279a676b3b404edc2eeeb60e9266ce3f4'}
         project_url         = 'https://bitbucket.org/sakoay/tankmousevr.git'
     end

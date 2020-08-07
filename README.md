@@ -10,7 +10,7 @@ This is a small tool to generate "playback" videos for the Virtual Reality Tower
 * Clone **U19-pipeline-matlab**
 (https://github.com/BrainCOGS/U19-pipeline-matlab)
 
-* Read permission only in **TankMouseVR**
+* Have read permission only in **TankMouseVR**
 (https://github.com/BrainCOGS/U19-pipeline-matlab)
 
 * Make sure you have a user set up for datajoint u19.
@@ -58,8 +58,17 @@ rtt.generateVideosSession(key)
 ```
 key.subject_fullname = 'hnieh_E84'
 key.session_date     = '2019-06-13'
-key.block     = 2
-key.trial_idx     = 1
+key.block            = 2
+key.trial_idx        = 1
+key = 
+
+  struct with fields:
+
+    subject_fullname: 'hnieh_E84'
+        session_date: '2019-06-13'
+               block: 2
+           trial_idx: 1
+
 ```
 
 

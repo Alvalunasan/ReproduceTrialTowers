@@ -15,6 +15,8 @@ This is a small tool to generate "playback" videos for the Virtual Reality Tower
 
 * Make sure you have a user set up for datajoint u19.
 
+* To generate videos this tool has to be installed in a ViRMEn capable computer.
+
 
 ## How to use
 

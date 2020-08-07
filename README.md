@@ -1,0 +1,71 @@
+# Reproduce Trial Towers
+
+This is a small tool to generate "playback" videos for the Virtual Reality Towers Task.
+
+## Prerequisities
+
+* Clone **Datajoint Matlab**.
+
+[https://github.com/datajoint/datajoint-matlab]
+(https://github.com/datajoint/datajoint-matlab)
+
+* Clone **U19-pipeline-matlab**
+
+[https://github.com/BrainCOGS/U19-pipeline-matlab]
+(https://github.com/BrainCOGS/U19-pipeline-matlab)
+
+* Read permission only in **TankMouseVR**
+
+[https://github.com/BrainCOGS/U19-pipeline-matlab]
+(https://github.com/BrainCOGS/U19-pipeline-matlab)
+
+* Make sure you have a user set up for datajoint u19.
+
+
+## How to use
+
+### First steps
+
+1. Add **Datajoint Matlab** to Matlab path
+2. Add **U19-pipeline-matlab** to Matlab path
+3. Add this repository **(ReproduceTrialTowers)** to Path
+4. Create ReproduceTrialTowers object
+
+`rtt = ReproduceTrialTowers()`
+
+(User and password for datajoint needed here)
+
+### To generate videos
+
+- Create a key as a reference to a **single session**.
+
+`key.subject_fullname = 'hnieh_E84'`
+`key.session_date     = '2019-06-13'` 
+
+`key`
+
+  `struct with fields:`
+
+    subject_fullname: 'hnieh_E84'
+        session_date: '2019-06-13'`
+
+
+- Use ReproduceTrialTowers with the key to generate videos.
+
+`rtt.generateVideosSession(key)`
+
+
+### To retrieve videos
+
+- Create a key as a reference to a **single trial**.
+
+`key.subject_fullname = 'hnieh_E84'`
+`key.session_date     = '2019-06-13'`
+`key.block     = 2`
+`key.trial_idx     = 1`
+
+
+
+- Use ReproduceTrialTowers with the key to retrieve video.
+
+`rtt.retrieveVideosTrial(key)`

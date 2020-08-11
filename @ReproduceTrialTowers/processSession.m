@@ -1,5 +1,8 @@
 function processSession(obj, sessionKey)
 
+% create our clean up object
+cleanupObj = onCleanup(@cleanMeUp);
+
 blockTable = obj.getBlocksSession(sessionKey);
 acqTable =   obj.getAcquisitonSession(sessionKey);
 
@@ -99,11 +102,23 @@ for j=1:numBlocks
             
             insert(behavior.TowersBlockTrialVideo, trialKey);
             
+            vr.state = BehavioralState.EndOfTrial;
+            [err, vr, vradd] = virmen_eng.virmenEngineMinimum(vr, vradd);
+            
         end
     end
     
 end
 
+end
+
+% fires when main function terminates
+function cleanMeUp()
+% clear ViRMEn 
+drawnow;
+virmenOpenGLRoutines(2);
+close all force
+clear mex
 end
 
 
